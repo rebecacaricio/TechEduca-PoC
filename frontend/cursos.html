@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cursos - TechEduca</title>
+  <link rel="stylesheet" href="styles/style.css" />
+</head>
+<body>
+  <h2>Cursos Disponíveis</h2>
+  <div id="courseList"></div>
+
+  <script>
+    async function carregarCursos() {
+      const res = await fetch("http://localhost:3000/api/courses");
+      const cursos = await res.json();
+
+      const lista = document.getElementById("courseList");
+      cursos.forEach((curso) => {
+        const card = document.createElement("div");
+        card.innerHTML = `<h3>${curso.title}</h3><p>${curso.description}</p>`;
+        card.classList.add("curso");
+        lista.appendChild(card);
+      });
+    }
+
+    carregarCursos();
+  </script>
+</body>
+</html>

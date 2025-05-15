@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cadastro - TechEduca</title>
+  <link rel="stylesheet" href="styles/style.css" />
+</head>
+<body>
+  <h2>Cadastro</h2>
+  <form id="registerForm">
+    <input type="text" id="name" placeholder="Nome" required />
+    <input type="email" id="email" placeholder="E-mail" required />
+    <input type="password" id="password" placeholder="Senha" required />
+    <button type="submit">Cadastrar</button>
+  </form>
+  <p>Já tem conta? <a href="index.html">Entrar</a></p>
+
+  <script>
+    document.getElementById("registerForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      const res = await fetch("http://localhost:3000/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password })
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        alert("Usuário cadastrado!");
+        window.location.href = "index.html";
+      } else {
+        alert(data.error);
+      }
+    });
+  </script>
+</body>
+</html>
