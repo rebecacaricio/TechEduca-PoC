@@ -2,28 +2,92 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cursos - TechEduca</title>
   <link rel="stylesheet" href="styles/style.css" />
+  <!-- Ícones Font Awesome -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+  />
 </head>
 <body>
+
+  <!-- Botões de tema -->
+  <div class="theme-buttons">
+    <button class="theme-btn light-btn" onclick="setLightTheme()">
+      <i class="fas fa-sun"></i>
+    </button>
+    <button class="theme-btn dark-btn" onclick="setDarkTheme()">
+      <i class="fas fa-moon"></i>
+    </button>
+  </div>
+
   <h2>Cursos Disponíveis</h2>
+
+  <!-- Lista de cursos -->
   <div id="courseList"></div>
 
-  <script>
-    async function carregarCursos() {
-      const res = await fetch("http://localhost:3000/api/courses");
-      const cursos = await res.json();
+  <!-- Rodapé -->
+  <footer class="footer">
+    <div class="social-icons">
+      <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+      <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+      <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+    </div>
+    <p class="footer-text">&copy; 2025 TechEduca. Todos os direitos reservados.</p>
+  </footer>
 
-      const lista = document.getElementById("courseList");
-      cursos.forEach((curso) => {
-        const card = document.createElement("div");
-        card.innerHTML = `<h3>${curso.title}</h3><p>${curso.description}</p>`;
-        card.classList.add("curso");
-        lista.appendChild(card);
-      });
+  <!-- Script de tema e cursos -->
+  <script>
+    // Funções de tema
+    function setLightTheme() {
+      document.body.classList.remove('dark-mode');
+      localStorage.setItem('theme', 'light');
     }
 
-    carregarCursos();
+    function setDarkTheme() {
+      document.body.classList.add('dark-mode');
+      localStorage.setItem('theme', 'dark');
+    }
+
+    // Carregar tema salvo
+    window.onload = function() {
+      const theme = localStorage.getItem('theme');
+      if (theme === 'dark') {
+        setDarkTheme();
+      } else {
+        setLightTheme();
+      }
+      carregarCursos();
+    };
+
+    // Carregar cursos da API
+    async function carregarCursos() {
+      try {
+        const res = await fetch("http://localhost:3000/api/courses");
+        const cursos = await res.json();
+
+        const lista = document.getElementById("courseList");
+
+        if (cursos.length === 0) {
+          lista.innerHTML = "<p>Nenhum curso disponível no momento.</p>";
+        } else {
+          cursos.forEach((curso) => {
+            const card = document.createElement("div");
+            card.classList.add("curso");
+            card.innerHTML = `
+              <h3>${curso.title}</h3>
+              <p>${curso.description}</p>
+            `;
+            lista.appendChild(card);
+          });
+        }
+      } catch (error) {
+        document.getElementById("courseList").innerHTML = "<p>Erro ao carregar cursos.</p>";
+      }
+    }
   </script>
+
 </body>
 </html>

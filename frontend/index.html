@@ -2,37 +2,152 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login - TechEduca</title>
   <link rel="stylesheet" href="styles/style.css" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+  />
+  <style>
+    /* Rodapé fixo na parte inferior da janela */
+    .footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: #f0f0f0;
+      color: #555;
+      text-align: center;
+      padding: 20px 0;
+      border-top: 1px solid #ddd;
+      z-index: 999;
+    }
+    /* Evita que conteúdo fique atrás do rodapé */
+    body {
+      margin-bottom: 80px; /* ajuste conforme altura do footer */
+    }
+
+    /* ===== BOTÕES DE TEMA ===== */
+    .theme-buttons {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      display: flex;
+      gap: 10px;
+      z-index: 1000;
+    }
+
+    .theme-btn {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px; /* tamanho maior para os emojis (não usado mais) */
+      transition: transform 0.2s;
+      padding: 0;
+      background-color: transparent;
+    }
+
+    .theme-btn:hover {
+      transform: scale(1.1);
+    }
+
+    .light-btn {
+      background-color: #f1c40f; /* amarelo sol */
+      color: white;
+    }
+
+    .dark-btn {
+      background-color: #2c3e50; /* azul escuro lua */
+      color: white;
+    }
+  </style>
 </head>
 <body>
+
+  <!-- Botões de tema -->
+  
+  <div class="theme-buttons">
+    <button class="theme-btn light-btn" onclick="setLightTheme()">
+      <i class="fas fa-sun"></i>
+    </button>
+    <button class="theme-btn dark-btn" onclick="setDarkTheme()">
+      <i class="fas fa-moon"></i>
+    </button>
+  </div>
+
+
   <h2>Login</h2>
+
+  <!-- Formulário -->
   <form id="loginForm">
     <input type="email" id="email" placeholder="E-mail" required />
     <input type="password" id="password" placeholder="Senha" required />
     <button type="submit">Entrar</button>
   </form>
+
   <p>Não tem conta? <a href="cadastro.html">Cadastre-se</a></p>
 
+  <!-- Rodapé -->
+  <footer class="footer">
+    <div class="social-icons">
+      <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+      <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+      <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+    </div>
+    <p class="footer-text">&copy; 2025 TechEduca. Todos os direitos reservados.</p>
+  </footer>
+
   <script>
+    // Funções de tema
+    function setLightTheme() {
+      document.body.classList.remove('dark-mode');
+      localStorage.setItem('theme', 'light');
+    }
+
+    function setDarkTheme() {
+      document.body.classList.add('dark-mode');
+      localStorage.setItem('theme', 'dark');
+    }
+
+    // Carregar tema salvo ao abrir
+    window.onload = function() {
+      const theme = localStorage.getItem('theme');
+      if (theme === 'dark') {
+        setDarkTheme();
+      } else {
+        setLightTheme();
+      }
+    };
+
+    // Envio do formulário de login
     document.getElementById("loginForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
 
-      const res = await fetch("http://localhost:3000/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
-      });
+      try {
+        const res = await fetch("http://localhost:3000/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password })
+        });
 
-      const data = await res.json();
-      if (res.ok) {
-        alert("Login bem-sucedido!");
-        localStorage.setItem("user", JSON.stringify(data.user));
-        window.location.href = "cursos.html";
-      } else {
-        alert(data.error);
+        const data = await res.json();
+        if (res.ok) {
+          alert("Login bem-sucedido!");
+          localStorage.setItem("user", JSON.stringify(data.user));
+          window.location.href = "cursos.html";
+        } else {
+          alert(data.error || "Erro ao fazer login.");
+        }
+      } catch (error) {
+        alert("Erro de conexão com o servidor.");
       }
     });
   </script>
