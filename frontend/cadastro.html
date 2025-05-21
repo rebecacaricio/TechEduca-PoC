@@ -2,10 +2,26 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Cadastro - TechEduca</title>
   <link rel="stylesheet" href="styles/style.css" />
+  <!-- Font Awesome -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+  />
 </head>
 <body>
+  <!-- Botões de tema -->
+  <div class="theme-buttons">
+    <button class="theme-btn light-btn" onclick="setLightTheme()">
+      <i class="fas fa-sun"></i>
+    </button>
+    <button class="theme-btn dark-btn" onclick="setDarkTheme()">
+      <i class="fas fa-moon"></i>
+    </button>
+  </div>
+
   <h2>Cadastro</h2>
   <form id="registerForm">
     <input type="text" id="name" placeholder="Nome" required />
@@ -13,29 +29,70 @@
     <input type="password" id="password" placeholder="Senha" required />
     <button type="submit">Cadastrar</button>
   </form>
+
   <p>Já tem conta? <a href="index.html">Entrar</a></p>
 
+  <!-- Rodapé -->
+  <footer class="footer">
+    <div class="social-icons">
+      <a href="#" target="_blank" aria-label="Instagram">
+        <i class="fab fa-instagram"></i>
+      </a>
+      <a href="#" target="_blank" aria-label="LinkedIn">
+        <i class="fab fa-linkedin"></i>
+      </a>
+      <a href="#" target="_blank" aria-label="GitHub">
+        <i class="fab fa-github"></i>
+      </a>
+    </div>
+    <p class="footer-text">&copy; 2025 TechEduca. Todos os direitos reservados.</p>
+  </footer>
+
   <script>
-    document.getElementById("registerForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const name = document.getElementById("name").value;
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
+    // Funções de tema
+    function setLightTheme() {
+      document.body.classList.remove("dark-mode");
+      localStorage.setItem("theme", "light");
+    }
 
-      const res = await fetch("http://localhost:3000/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password })
-      });
+    function setDarkTheme() {
+      document.body.classList.add("dark-mode");
+      localStorage.setItem("theme", "dark");
+    }
 
-      const data = await res.json();
-      if (res.ok) {
-        alert("Usuário cadastrado!");
-        window.location.href = "index.html";
+    // Carregar tema salvo
+    window.onload = function () {
+      const theme = localStorage.getItem("theme");
+      if (theme === "dark") {
+        setDarkTheme();
       } else {
-        alert(data.error);
+        setLightTheme();
       }
-    });
+    };
+
+    // Envio do formulário
+    document
+      .getElementById("registerForm")
+      .addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const name = document.getElementById("name").value;
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        const res = await fetch("http://localhost:3000/api/auth/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, password }),
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          alert("Usuário cadastrado!");
+          window.location.href = "index.html";
+        } else {
+          alert(data.error);
+        }
+      });
   </script>
 </body>
 </html>
